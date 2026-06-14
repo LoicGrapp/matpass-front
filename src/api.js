@@ -61,3 +61,33 @@ export function logout(token) {
     headers: { Authorization: `Bearer ${token}` },
   })
 }
+
+// En-tête d'authentification basé sur le token stocké dans le navigateur.
+function authHeaders() {
+  const token = localStorage.getItem('token')
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
+// Liste des utilisateurs (admin), filtre optionnel par rôle.
+export function listUsers(role) {
+  const query = role ? `?role=${encodeURIComponent(role)}` : ''
+  return request(`/users${query}`, { headers: authHeaders() })
+}
+
+// Création d'un utilisateur (admin).
+export function createUser(data) {
+  return request('/users', {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  })
+}
+
+// Mise à jour d'un utilisateur (admin) : rôle, statut, etc.
+export function updateUser(id, data) {
+  return request(`/users/${id}`, {
+    method: 'PATCH',
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  })
+}

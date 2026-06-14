@@ -23,7 +23,7 @@ function initials(name) {
 }
 
 const navItemBase =
-  'flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-sm text-left cursor-pointer transition'
+  'flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-sm text-left cursor-pointer transition outline-none'
 
 export default function DashboardLayout({ user, onLogout, roleLabel, title, navItems, children }) {
   return (
@@ -42,9 +42,10 @@ export default function DashboardLayout({ user, onLogout, roleLabel, title, navI
         )}
 
         <nav className="flex flex-col gap-1">
-          {navItems.map(({ icon: Icon, label, active }) => (
+          {navItems.map(({ icon: Icon, label, active, onClick }) => (
             <button
               key={label}
+              onClick={onClick}
               className={`${navItemBase} ${
                 active
                   ? 'bg-[#2a2a30] text-foreground'
