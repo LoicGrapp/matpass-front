@@ -1,0 +1,28 @@
+@import 'tailwindcss';
+
+/* === Tokens du design (.pen), thème sombre de l'app ===
+   Chaque variable --color-* crée automatiquement les classes Tailwind
+   correspondantes : bg-primary, text-foreground, border-border, etc. */
+@theme {
+  --color-background: #111111;
+  --color-foreground: #ffffff;
+  --color-card: #1a1a1a;
+  --color-border: #2e2e2e;
+  --color-muted-foreground: #b8b9b6;
+  --color-primary: #ff8400;
+  --color-primary-foreground: #111111;
+  --color-sidebar: #18181b;
+  --color-destructive: #ff5c33;
+
+  --font-sans: 'Geist', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+}
