@@ -3,6 +3,7 @@ import Login from './Login'
 import Register from './Register'
 import AdminDashboard from './AdminDashboard'
 import MemberDashboard from './MemberDashboard'
+import CoachDashboard from './CoachDashboard'
 import { me, logout } from './api'
 
 export default function App() {
@@ -74,10 +75,13 @@ export default function App() {
   }
 
   // Connecté → tableau de bord selon le rôle.
-  const isAdmin = user.role === 'admin' || user.role === 'super_admin'
-  return isAdmin ? (
-    <AdminDashboard user={user} onLogout={handleLogout} />
-  ) : (
-    <MemberDashboard user={user} onLogout={handleLogout} />
-  )
+  if (user.role === 'admin' || user.role === 'super_admin') {
+    return <AdminDashboard user={user} onLogout={handleLogout} />
+  }
+
+  if (user.role === 'coach') {
+    return <CoachDashboard user={user} onLogout={handleLogout} />
+  }
+
+  return <MemberDashboard user={user} onLogout={handleLogout} />
 }

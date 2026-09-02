@@ -7,12 +7,14 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
 // En cas d'erreur (status >= 400), elle lève une exception avec un message lisible.
 async function request(path, options = {}) {
   const response = await fetch(`${API_URL}/api${path}`, {
+    ...options,
+    // En-têtes en dernier pour qu'ils ne soient jamais écrasés par options.
+    // On garde Accept + Content-Type, et on fusionne ceux d'options (ex. Authorization).
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
       ...options.headers,
     },
-    ...options,
   })
 
   const data = await response.json().catch(() => ({}))
@@ -89,5 +91,84 @@ export function updateUser(id, data) {
     method: 'PATCH',
     headers: authHeaders(),
     body: JSON.stringify(data),
+  })
+}
+
+// Liste des espaces.
+export function listEspaces() {
+  return request('/espaces', { headers: authHeaders() })
+}
+
+// Liste des cours.
+export function listCours() {
+  return request('/cours', { headers: authHeaders() })
+}
+
+// Liste des créneaux (avec cours, espace, coach).
+export function listCreneaux() {
+  return request('/creneaux', { headers: authHeaders() })
+}
+
+// Création d'un créneau (admin).
+export function createCreneau(data) {
+  return request('/creneaux', {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  })
+}
+
+// Mes réservations.
+export function listReservations() {
+  return request('/reservations', { headers: authHeaders() })
+}
+
+// Réserver un créneau.
+export function reserveCreneau(creneauId) {
+  return request('/reservations', {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify({ creneau_id: creneauId }),
+  })
+}
+
+// Annuler une réservation.
+export function cancelReservation(id) {
+  return request(`/reservations/${id}`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+  })
+}
+
+// Le QR code d'une réservation, renvoyé en SVG par l'API (pas du JSON) :
+// on récupère l'image brute et on en fait une URL utilisable dans <img>.
+export async function reservationQrUrl(id) {
+  const response = await fetch(`${API_URL}/api/reservations/${id}/qr`, {
+    headers: authHeaders(),
+  })
+
+  if (!response.ok) {
+    throw new Error("Impossible d'afficher le QR code.")
+  }
+
+  return URL.createObjectURL(await response.blob())
+}
+
+// Les créneaux du coach connecté, pour une date donnée (YYYY-MM-DD).
+export function listMyCreneaux(date) {
+  return request(`/creneaux?mine=1&date=${date}`, { headers: authHeaders() })
+}
+
+// Les membres inscrits sur un créneau (coach du créneau uniquement).
+export function listCreneauReservations(creneauId) {
+  return request(`/creneaux/${creneauId}/reservations`, { headers: authHeaders() })
+}
+
+// Validation d'une présence à partir du jeton lu dans le QR code.
+export function validatePresence(token) {
+  return request('/presences', {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify({ token }),
   })
 }

@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import DashboardLayout from './DashboardLayout'
 import MembersPage from './MembersPage'
+import PlanningPage from './PlanningPage'
 
 // Les pages de l'espace admin (l'ordre = l'ordre dans la sidebar).
 const pages = [
@@ -104,7 +105,10 @@ export default function AdminDashboard({ user, onLogout }) {
     >
       {page === 'dashboard' && <DashboardHome />}
       {page === 'members' && <MembersPage />}
-      {page !== 'dashboard' && page !== 'members' && <Placeholder label={current.label} />}
+      {page === 'planning' && <PlanningPage />}
+      {!['dashboard', 'members', 'planning'].includes(page) && (
+        <Placeholder label={current.label} />
+      )}
     </DashboardLayout>
   )
 }
